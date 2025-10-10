@@ -44,7 +44,7 @@ base_cfg = {
 }
 
 sizes_cfg = {
-    "n": {
+    "nano": {
         "HGNetv2": {
             "name": "B0",
             "return_idx": [2, 3],
@@ -72,7 +72,7 @@ sizes_cfg = {
             "dim_feedforward": 512,
         },
     },
-    "s": {
+    "small": {
         "HGNetv2": {
             "name": "B0",
             "return_idx": [1, 2, 3],
@@ -99,7 +99,7 @@ sizes_cfg = {
             "num_points": [3, 6, 3],
         },
     },
-    "m": {
+    "medium": {
         "HGNetv2": {
             "name": "B2",
             "return_idx": [1, 2, 3],
@@ -127,7 +127,7 @@ sizes_cfg = {
             "num_points": [3, 6, 3],
         },
     },
-    "l": {
+    "large": {
         "HGNetv2": {
             "name": "B4",
             "return_idx": [1, 2, 3],
@@ -155,7 +155,7 @@ sizes_cfg = {
             "num_points": [3, 6, 3],
         },
     },
-    "x": {
+    "extra_large": {
         "HGNetv2": {
             "name": "B5",
             "return_idx": [1, 2, 3],
@@ -185,6 +185,55 @@ sizes_cfg = {
     },
 }
 
+AUGMENTATION_CONFIG = {'rotation_degree': 10,
+                       'rotation_p': 0.0,
+                       'multiscale_prob': 0.0,
+                       'rotate_90': 0.05,
+                       'left_right_flip': 0.3,
+                       'up_down_flip': 0.0,
+                       'to_gray': 0.01,
+                       'blur': 0.01,
+                       'gamma': 0.02,
+                       'brightness': 0.02,
+                       'noise': 0.01,
+                       'coarse_dropout': 0.0,
+                       'mosaic_prob': 0.8,
+                       'no_mosaic_epochs': 5,
+                       'mosaic_scale': [0.5, 1.5],
+                       'mosaic_degrees': 0.0,
+                       'mosaic_translate': 0.2,
+                       'mosaic_shear': 2.0
+                      }
+
+HYPER_PARAMS = {'image_size': (320, 320),
+                'freq': 1.0,
+                'quit': 'fixed',
+                'epochs': 50,
+                'min_epochs': 0,
+                'lag': 10,
+                'min_delta': None,
+                'optimizer': 'AdamW',
+                'lrate': 1e-4,
+                'momentum': 0.9,
+                'weight_decay': 1e-5,
+                'schedule': 'constant',
+                'completed_epochs': 0,
+                'augment': False,
+                # lr scheduler params
+                # step/exp decay
+                'step_size': 10,
+                'gamma': 0.1,
+                # reduce on plateau
+                'rop_factor': 0.1,
+                'sched_patience': 5,
+                # cosine
+                'cos_max': 50,
+                'cos_min_lr': 2e-5,
+                'warmup': 1000,
+                'batch_size': 16,
+                'gradient_clip_val': 1.0,
+                'accumulate_grad_batches': 8,
+                }
 
 def merge_configs(base, size_specific):
     result = {**base}
