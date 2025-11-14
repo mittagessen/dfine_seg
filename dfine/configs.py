@@ -27,7 +27,7 @@ class DFINESegmentationTrainingDataConfig(SegmentationTrainingDataConfig):
     only trains regions and filters out all lines.
     """
     def __init__(self, **kwargs):
-        self.image_size = kwargs.pop('image_size', (320, 320))
+        self.image_size = kwargs.pop('image_size', (1280, 1280))
         kwargs.setdefault('batch_size', 16)
         kwargs.setdefault('line_class_mapping', {})
 

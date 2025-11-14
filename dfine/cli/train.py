@@ -125,6 +125,7 @@ logging.getLogger("lightning.fabric.utilities.seed").setLevel(logging.ERROR)
               'link to source images. In `path` mode arguments are image files '
               'sharing a prefix up to the last extension with JSON `.path` files '
               'containing the baseline information.')
+@click.option('-is', '--image-size', type=(int, int), help='Network input image size.')
 @click.option('--augment/--no-augment', help='Enable image augmentation')
 @click.option('--line-class-mapping', type=click.UNPROCESSED, hidden=True)
 @click.option('--region-class-mapping', type=click.UNPROCESSED, hidden=True)
