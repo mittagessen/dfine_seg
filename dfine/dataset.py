@@ -37,30 +37,6 @@ if TYPE_CHECKING:
     from kraken.containers import Segmentation
 
 
-def filter_bboxes(bboxes: torch.Tensor) -> torch.Tensor:
-    """
-    Filters bounding boxes in normalized cxcywh format to be inside the image and be
-    ordered correctly.
-
-    Args:
-        bboxes: tensor of shape `(T, 4)` containing the bbox coordinates
-        (center_x, center_y, width, height).
-        image_size: tuple with the input image size (width, height).
-
-    Returns:
-        A tensors of shape `(T', 4)` where `T' <= T`.
-    """
-    close_to_zero = bboxes.isclose(torch.tensor([0.]))
-    close_to_one = bboxes.isclose(torch.tensor([1.]))
-
-    valid_range = ~(close_to_zero | close_to_one)
-
-    valid_width = (bboxes[:, 0] - bboxes[:, 2] / 2 > 0) & (bboxes[:, 0] + bboxes[:, 2] / 2 < 1)
-    valid_height = (bboxes[:, 1] - bboxes[:, 3] / 2 > 0) & (bboxes[:, 1] + bboxes[:, 3] / 2 < 1)
-    valid_bboxes = valid_range & valid_width & valid_height
-    return bboxes[valid_bboxes]
-
-
 def collate_batch(batch):
     """
     Collates an object detection batch.
@@ -128,7 +104,7 @@ class XMLDetectionDataset(Dataset):
                                                         target_size=image_size),
                                                A.Normalize(mean=self.norm[0], std=self.norm[1]),
                                                ToTensorV2()],
-                                              bbox_params=A.BboxParams(format="yolo", label_fields=["labels"], clip=True))
+                                              bbox_params=A.BboxParams(format="yolo", label_fields=["labels"], clip=True, filter_invalid_bboxes=True))
 
             self.transforms = A.Compose([A.CoarseDropout(
                                              num_holes_range=(1, 2),
@@ -158,12 +134,12 @@ class XMLDetectionDataset(Dataset):
                                          A.Resize(self.image_size[0], self.image_size[1], interpolation=cv2.INTER_AREA),
                                          A.Normalize(mean=self.norm[0], std=self.norm[1]),
                                          ToTensorV2()],
-                                        bbox_params=A.BboxParams(format="yolo", label_fields=["labels"], clip=True))
+                                        bbox_params=A.BboxParams(format="yolo", label_fields=["labels"], clip=True, filter_invalid_bboxes=True))
         else:
             self.transforms = A.Compose([A.Resize(self.image_size[0], self.image_size[1], interpolation=cv2.INTER_AREA),
                                          A.Normalize(mean=self.norm[0], std=self.norm[1]),
                                          ToTensorV2()],
-                                        bbox_params=A.BboxParams(format="yolo", label_fields=["labels"], clip=True))
+                                        bbox_params=A.BboxParams(format="yolo", label_fields=["labels"], clip=True, filter_invalid_bboxes=True))
 
         self.targets = []
         self.imgs = []
