@@ -147,7 +147,7 @@ class DFINESegmentationDataModule(L.LightningDataModule):
 
     def train_dataloader(self):
         return DataLoader(self.train_set,
-                          batch_size=1,
+                          batch_size=self.hparams.data_config.batch_size,
                           num_workers=self.hparams.data_config.num_workers,
                           shuffle=True,
                           pin_memory=True,
@@ -156,14 +156,14 @@ class DFINESegmentationDataModule(L.LightningDataModule):
     def val_dataloader(self):
         return DataLoader(self.val_set,
                           shuffle=False,
-                          batch_size=1,
+                          batch_size=self.hparams.data_config.batch_size,
                           num_workers=self.hparams.data_config.num_workers,
                           collate_fn=collate_batch)
 
     def test_dataloader(self):
         return DataLoader(self.test_set,
                           shuffle=False,
-                          batch_size=1,
+                          batch_size=self.hparams.data_config.batch_size,
                           num_workers=self.hparams.data_config.num_workers,
                           collate_fn=collate_batch)
 
