@@ -46,6 +46,7 @@ logger = logging.getLogger(__name__)
 __all__ = ['DFINESegmentationDataModule', 'DFINESegmentationModel']
 
 
+@torch.compile()
 def model_step(model, criterion, batch):
     o = model(batch['images'], targets=batch['target'])
     return criterion(outputs=o, targets=batch['target'])
