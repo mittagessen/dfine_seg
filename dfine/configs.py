@@ -23,13 +23,11 @@ class DFINESegmentationTrainingConfig(TrainingConfig):
 
 class DFINESegmentationTrainingDataConfig(SegmentationTrainingDataConfig):
     """
-    Base data configuration for a D-FINE segmentation model.  Per default it
-    only trains regions and filters out all lines.
+    Base data configuration for a D-FINE segmentation model.
     """
     def __init__(self, **kwargs):
         self.image_size = kwargs.pop('image_size', (1280, 1280))
         kwargs.setdefault('batch_size', 16)
-        kwargs.setdefault('line_class_mapping', {})
 
         super().__init__(**kwargs)
 
