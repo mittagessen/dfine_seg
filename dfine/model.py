@@ -135,7 +135,6 @@ class DFINESegmentationDataModule(L.LightningDataModule):
                 raise ValueError('No valid validation data provided. Please add some.')
             self.hparams.data_config.line_class_mapping = dict(self.train_set.dataset.class_mapping['lines'])
             self.hparams.data_config.region_class_mapping = dict(self.train_set.dataset.class_mapping['regions'])
-            self.num_classes = max(max(v.values()) if v else 0 for v in self.train_set.dataset.class_mapping.values()) + 1
         elif stage == 'test':
             if len(self.test_data) == 0:
                 raise ValueError('No valid test data provided. Please add some.')
@@ -252,6 +251,8 @@ class DFINESegmentationModel(L.LightningModule):
                                         model_variant=self.hparams.config.model_variant,
                                         image_size=self.trainer.datamodule.hparams.data_config.image_size,
                                         class_mapping=set_class_mapping)
+
+                self.num_classes = max(max(v.values()) if v else 0 for v in set_class_mapping.values()) + 1
 
                 self.criterion = build_criterion(model_variant=self.hparams.config.model_variant,
                                                  class_mapping=set_class_mapping)
