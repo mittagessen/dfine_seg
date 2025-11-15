@@ -136,6 +136,7 @@ class DFINESegmentationDataModule(L.LightningDataModule):
                 raise ValueError('No valid validation data provided. Please add some.')
             self.hparams.data_config.line_class_mapping = dict(self.train_set.dataset.class_mapping['lines'])
             self.hparams.data_config.region_class_mapping = dict(self.train_set.dataset.class_mapping['regions'])
+            self.num_classes = max(max(v.values()) if v else 0 for v in self.train_set.dataset.class_mapping.values()) + 1
         elif stage == 'test':
             if len(self.test_data) == 0:
                 raise ValueError('No valid test data provided. Please add some.')
@@ -208,16 +209,16 @@ class DFINESegmentationModel(L.LightningModule):
         return sum(loss.values())
 
     def validation_step(self, batch, batch_idx):
-        img_size = torch.Tensor(tuple(batch['images'].shape[2:] * 2), device=batch['images'].device)
+        img_size = torch.tensor(tuple(batch['images'].shape[2:] * 2), device=batch['images'].device)
 
         outputs = self.net(batch['images'])
         pred_logits, pred_boxes = outputs["pred_logits"], outputs["pred_boxes"]
         pred_boxes = box_convert(pred_boxes, in_fmt='cxcywh', out_fmt='xyxy') * img_size
 
-        pred_scores = torch.sigmoid(pred_logits)
-        pred_scores, index = torch.topk(pred_scores.flatten(1), self.hparams.num_top_queries, dim=-1)
-        pred_labels = index - index // self.hparams.num_classes * self.hparams.num_classes
-        index = index // self.hparams.num_classes
+        pred_scores = pred_logits.sigmoid()
+        pred_scores, index = torch.topk(pred_scores.flatten(1), self.hparams.config.num_top_queries, dim=-1)
+        pred_labels = index - index // self.num_classes * self.num_classes
+        index = index // self.num_classes
         pred_boxes = pred_boxes.gather(dim=1, index=index.unsqueeze(-1).repeat(1, 1, pred_boxes.shape[-1]))
 
         preds = [dict(labels=lab,
