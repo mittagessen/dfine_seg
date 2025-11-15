@@ -267,7 +267,7 @@ class DFINESegmentationModel(L.LightningModule):
         data_config = checkpoint['datamodule_hyper_parameters']['data_config']
         self.net = create_model('DFINEModel',
                                 model_variant=checkpoint['_module_config'].model_variant,
-                                image_size=self.trainer.datamodule.hparams.data_config.image_size,
+                                image_size=data_config.image_size,
                                 class_mapping={'lines': data_config.line_class_mapping,
                                                'regions': data_config.region_class_mapping})
 
