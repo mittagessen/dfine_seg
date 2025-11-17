@@ -26,7 +26,7 @@ from pathlib import Path
 from threadpoolctl import threadpool_limits
 from kraken.registry import OPTIMIZERS, SCHEDULERS, STOPPERS
 
-from .util import _expand_gt, _validate_manifests, message, to_ptl_device, _validate_merging
+from .util import _expand_gt, _validate_manifests, message, to_ptl_device, _validate_merging, _create_class_map
 
 logging.captureWarnings(True)
 logger = logging.getLogger('dfine')

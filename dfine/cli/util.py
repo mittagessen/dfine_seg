@@ -22,12 +22,27 @@ import glob
 import yaml
 import shlex
 import logging
+from collections import defaultdict
 from typing import List, Optional, Tuple, Dict, Any
 
 import click
 
 logging.captureWarnings(True)
 logger = logging.getLogger('dfine')
+
+
+def _create_class_map(cls_map):
+    """
+    Converts the list as a parameter
+    """
+    default = None
+    for idx, (cls, label) in enumerate(cls_map):
+        if '*' in cls:
+            def default():  # NOQA
+                return label
+            cls_map.pop(idx)
+            break
+    return defaultdict(default, cls_map)
 
 
 def _recursive_update(a: dict[str, Any],
